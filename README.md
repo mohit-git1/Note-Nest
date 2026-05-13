@@ -1,10 +1,10 @@
-# Twin-Mind
+# Note Nest
 
 A real-time AI meeting assistant that captures live transcription, generates intelligent suggestions, and extracts actionable tasks and goals directly from your conversations. Built for professionals who need a highly responsive, automated cognitive co-pilot.
 
 ## Live Demo
 
-Experience the application live: [Twin-Mind on Vercel](https://twin-mind-umber.vercel.app/)
+Experience the application live: [Note Nest on Vercel](https://note-nest-gilt.vercel.app/)
 
 ## Features
 
@@ -41,7 +41,7 @@ Experience the application live: [Twin-Mind on Vercel](https://twin-mind-umber.v
 
 ## Architecture Overview
 
-Twin-Mind utilizes a tightly coupled frontend and serverless backend architecture for low latency and high availability.
+Note Nest utilizes a tightly coupled frontend and serverless backend architecture for low latency and high availability.
 
 1. **Client Layer:** Next.js Server Components and Client Components manage the complex state of active meetings, buffering audio and transcript data via Zustand.
 2. **API Layer:** Next.js API Routes handle secure transactions. The `detect-actions` route processes transcript chunks asynchronously to identify tasks without blocking the main rendering thread.
@@ -60,8 +60,8 @@ Twin-Mind utilizes a tightly coupled frontend and serverless backend architectur
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/Twin-Mind.git
-cd Twin-Mind
+git clone https://github.com/yourusername/Note-Nest.git
+cd Note-Nest
 ```
 
 2. Install dependencies:

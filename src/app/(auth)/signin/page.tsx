@@ -52,7 +52,7 @@ function SignInForm() {
       {/* Brand */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-[#0f2e4a] tracking-tight">
-          Twin<span className="text-sky-600">Mind</span>
+          Note<span className="text-sky-600">Nest</span>
         </h1>
         <p className="text-sm text-slate-500 mt-2 font-medium">
           Sign in to your account

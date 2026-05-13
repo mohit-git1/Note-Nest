@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TwinMind — AI Meeting Assistant",
+  title: "NoteNest — AI Meeting Assistant",
   description: "Real-time AI meeting assistant with live transcription and intelligent suggestions",
 };
 
