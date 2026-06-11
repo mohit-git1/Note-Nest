@@ -71,6 +71,18 @@ export function useAudioRecorder() {
       if (res.ok) {
         const { sessionId } = await res.json();
         useAppStore.getState().setSessionId(sessionId);
+      } else if (res.status === 401) {
+        const guestSessionId = 'guest_' + Date.now();
+        useAppStore.getState().setSessionId(guestSessionId);
+        const guestSession = {
+          sessionId: guestSessionId,
+          startedAt: new Date().toISOString(),
+          transcript: [],
+          chatHistory: [],
+          title: 'Guest Meeting'
+        };
+        const localSessions = JSON.parse(localStorage.getItem('guest_sessions') || '[]');
+        localStorage.setItem('guest_sessions', JSON.stringify([guestSession, ...localSessions]));
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

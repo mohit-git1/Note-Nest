@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { History, X, Loader2, Calendar } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
+import { useSession } from 'next-auth/react';
 
 interface SessionPreview {
   sessionId: string;
@@ -16,8 +17,16 @@ export function PastSessions() {
   const [isLoading, setIsLoading] = useState(false);
   const { loadSession, resetState } = useAppStore();
 
+  const { status } = useSession();
+
   const fetchSessions = async () => {
     setIsLoading(true);
+    if (status !== 'authenticated') {
+      const localSessions = JSON.parse(localStorage.getItem('guest_sessions') || '[]');
+      setSessions(localSessions);
+      setIsLoading(false);
+      return;
+    }
     try {
       const res = await fetch('/api/sessions');
       if (res.ok) {
@@ -32,12 +41,21 @@ export function PastSessions() {
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && status !== 'loading') {
       fetchSessions();
     }
-  }, [isOpen]);
+  }, [isOpen, status]);
 
   const handleLoadSession = async (sessionId: string) => {
+    if (sessionId.startsWith('guest_')) {
+      const localSessions = JSON.parse(localStorage.getItem('guest_sessions') || '[]');
+      const session = localSessions.find((s: any) => s.sessionId === sessionId);
+      if (session) {
+        loadSession({ ...session, _id: session.sessionId });
+        setIsOpen(false);
+      }
+      return;
+    }
     try {
       const res = await fetch(`/api/sessions/${sessionId}`);
       if (res.ok) {

@@ -6,13 +6,9 @@ import { getGroqClient } from '@/lib/getGroqClient';
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     let groq;
     try {
-      groq = await getGroqClient(session.user.id);
+      groq = await getGroqClient(session?.user?.id || 'guest');
     } catch (e: any) {
       if (e.message === 'NO_API_KEY') {
         return NextResponse.json(

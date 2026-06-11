@@ -19,12 +19,18 @@ export default function TodosPage() {
   const [newTaskText, setNewTaskText] = useState('');
 
   useEffect(() => {
-    if (status === 'authenticated') {
+    if (status !== 'loading') {
       fetchTodos();
     }
   }, [status]);
 
   const fetchTodos = async () => {
+    if (status !== 'authenticated') {
+      const localTodos = JSON.parse(localStorage.getItem('guest_todos') || '[]');
+      setTodos(localTodos);
+      setIsLoading(false);
+      return;
+    }
     try {
       const res = await fetch('/api/todos');
       if (res.ok) {
@@ -39,8 +45,17 @@ export default function TodosPage() {
   };
 
   const toggleComplete = async (todo: any) => {
-    // Optimistic update
     const isDone = !todo.done;
+    
+    if (status !== 'authenticated') {
+      const updatedTodos = todos.map(t => 
+        t._id === todo._id ? { ...t, done: isDone, completed: isDone } : t
+      );
+      setTodos(updatedTodos);
+      localStorage.setItem('guest_todos', JSON.stringify(updatedTodos));
+      return;
+    }
+
     setTodos(prev => prev.map(t => 
       t._id === todo._id ? { ...t, done: isDone, completed: isDone } : t
     ));
@@ -57,7 +72,6 @@ export default function TodosPage() {
       });
     } catch (err) {
       console.error(err);
-      // Revert if error (simple reload for now)
       fetchTodos();
     }
   };
@@ -67,6 +81,22 @@ export default function TodosPage() {
       const text = newTaskText.trim();
       setNewTaskText('');
       setAddingTo(null);
+      
+      if (status !== 'authenticated') {
+        const newTodo = {
+          _id: Date.now().toString(),
+          text,
+          type: 'task',
+          timing: addingTo,
+          done: false,
+          completed: false,
+          createdAt: new Date().toISOString()
+        };
+        const updatedTodos = [newTodo, ...todos];
+        setTodos(updatedTodos);
+        localStorage.setItem('guest_todos', JSON.stringify(updatedTodos));
+        return;
+      }
       
       try {
         const res = await fetch('/api/todos', {

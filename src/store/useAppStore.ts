@@ -150,7 +150,17 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
 
     const { sessionId } = get();
-    if (sessionId) {
+    if (sessionId?.startsWith('guest_')) {
+      const localSessions = JSON.parse(localStorage.getItem('guest_sessions') || '[]');
+      const sessionIndex = localSessions.findIndex((s: any) => s.sessionId === sessionId);
+      if (sessionIndex !== -1) {
+        localSessions[sessionIndex].transcript.push({ text: line, speaker: 'Speaker 1' });
+        // Update preview
+        localSessions[sessionIndex].preview = localSessions[sessionIndex].transcript
+          .slice(0, 2).map((t: any) => t.text).join(' ').substring(0, 60) + '...';
+        localStorage.setItem('guest_sessions', JSON.stringify(localSessions));
+      }
+    } else if (sessionId) {
       try {
         await fetch(`/api/sessions/${sessionId}/transcript`, {
           method: 'PATCH',
@@ -169,7 +179,18 @@ export const useAppStore = create<AppState>((set, get) => ({
   addChatMessage: async (message) => {
     set((state) => ({ chatMessages: [...state.chatMessages, message] }));
     const { sessionId } = get();
-    if (sessionId) {
+    if (sessionId?.startsWith('guest_')) {
+      const localSessions = JSON.parse(localStorage.getItem('guest_sessions') || '[]');
+      const sessionIndex = localSessions.findIndex((s: any) => s.sessionId === sessionId);
+      if (sessionIndex !== -1) {
+        localSessions[sessionIndex].chatHistory.push({
+          role: message.sender === 'ai' ? 'assistant' : 'user',
+          content: message.text,
+          timestamp: message.id
+        });
+        localStorage.setItem('guest_sessions', JSON.stringify(localSessions));
+      }
+    } else if (sessionId) {
       try {
         await fetch(`/api/sessions/${sessionId}/chat`, {
           method: 'PATCH',

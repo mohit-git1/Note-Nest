@@ -16,13 +16,9 @@ export default function DashboardPage() {
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/signin');
-    } else if (status === 'authenticated') {
-      fetchDashboardData();
-      checkBannerState();
-    }
-  }, [status, router]);
+    fetchDashboardData();
+    checkBannerState();
+  }, [status]);
 
   const checkBannerState = () => {
     const lastDismissed = localStorage.getItem('actionBannerDismissed');
@@ -44,16 +40,23 @@ export default function DashboardPage() {
   };
 
   const fetchDashboardData = async () => {
+    if (status !== 'authenticated') {
+      const localTodos = JSON.parse(localStorage.getItem('guest_todos') || '[]');
+      const incomplete = localTodos.filter((t: any) => !t.completed && !t.done).length;
+      setTodosCount(incomplete);
+      
+      const localSessions = JSON.parse(localStorage.getItem('guest_sessions') || '[]');
+      setRecentMeetings(localSessions.slice(0, 3));
+      return;
+    }
+
     try {
       // Fetch Todos Count
       const todoRes = await fetch('/api/todos');
       if (todoRes.ok) {
         const { todos } = await todoRes.json();
-        const incomplete = todos.filter((t: any) => !t.completed).length;
+        const incomplete = todos.filter((t: any) => !t.completed && !t.done).length;
         setTodosCount(incomplete);
-        if (incomplete > 0 && showBanner === false) {
-           // Might want to show banner based on count, but relying on localStorage for now
-        }
       }
 
       // Fetch Recent Meetings
@@ -84,9 +87,15 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="flex items-center justify-between px-5 pt-12 pb-4">
         <div className="flex flex-col">
-          <button onClick={() => signOut()} className="p-2 -ml-2 text-slate-600">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-          </button>
+          {status === 'authenticated' ? (
+            <button onClick={() => signOut()} className="p-2 -ml-2 text-slate-600" title="Sign Out">
+              <LogOut className="w-6 h-6" />
+            </button>
+          ) : (
+            <Link href="/signin" className="px-4 py-2 bg-[#0f2e4a] text-white text-sm font-semibold rounded-full hover:bg-[#1a3f61] transition-colors">
+              Sign In
+            </Link>
+          )}
         </div>
         <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm border border-emerald-100">
           <Sparkles className="w-3 h-3" />

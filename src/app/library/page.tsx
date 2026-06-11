@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { FolderOpen, Calendar, Clock, ArrowRight, RotateCw, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 function LibraryContent() {
   const router = useRouter();
@@ -13,7 +14,18 @@ function LibraryContent() {
   const [sessions, setSessions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const { status } = useSession();
+
   useEffect(() => {
+    if (status === 'loading') return;
+
+    if (status !== 'authenticated') {
+      const localSessions = JSON.parse(localStorage.getItem('guest_sessions') || '[]');
+      setSessions(localSessions);
+      setIsLoading(false);
+      return;
+    }
+
     fetch('/api/sessions')
       .then(res => res.json())
       .then(data => {
@@ -21,7 +33,7 @@ function LibraryContent() {
       })
       .catch(console.error)
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [status]);
 
   return (
     <div className="flex flex-col flex-1 w-full bg-slate-50 text-slate-900 font-sans overflow-hidden">

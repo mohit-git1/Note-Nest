@@ -71,8 +71,17 @@ export function TopNav() {
         {isDropdownOpen && (
           <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden z-50">
             <div className="px-4 py-3 border-b border-slate-100">
-              <p className="text-sm font-semibold text-slate-800 truncate">{session?.user?.name || 'User'}</p>
-              <p className="text-xs text-slate-500 truncate">{session?.user?.email}</p>
+              {status === 'authenticated' ? (
+                <>
+                  <p className="text-sm font-semibold text-slate-800 truncate">{session?.user?.name || 'User'}</p>
+                  <p className="text-xs text-slate-500 truncate">{session?.user?.email}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-semibold text-slate-800 truncate">Guest User</p>
+                  <p className="text-xs text-slate-500 truncate mt-1">Sign in to save notes across devices.</p>
+                </>
+              )}
             </div>
             
             <div className="p-2 flex flex-col gap-1">
@@ -83,13 +92,23 @@ export function TopNav() {
                 </div>
               </SettingsModal>
               
-              <button 
-                onClick={() => signOut({ redirectTo: '/signin' })}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign Out
-              </button>
+              {status === 'authenticated' ? (
+                <button 
+                  onClick={() => signOut({ redirectTo: '/signin' })}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </button>
+              ) : (
+                <Link 
+                  href="/signin"
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-sky-600 hover:bg-sky-50 rounded-lg transition-colors w-full"
+                >
+                  <User className="w-4 h-4" />
+                  Sign In / Sign Up
+                </Link>
+              )}
             </div>
           </div>
         )}

@@ -23,10 +23,6 @@ export async function middleware(req: NextRequest) {
 
   const isAuthenticated = !!token
 
-  if (!isAuthenticated && !isPublicPath) {
-    return NextResponse.redirect(new URL("/signin", req.url))
-  }
-
   if (isAuthenticated && isPublicPath) {
     return NextResponse.redirect(new URL("/", req.url))
   }

@@ -5,12 +5,11 @@ import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
   const session = await auth()
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
+  
   const { recentLines } = await req.json()
   if (!recentLines?.length) return NextResponse.json({ actions: [] })
 
-  const groq = await getGroqClient(session.user.id)
+  const groq = await getGroqClient(session?.user?.id || 'guest')
 
   const prompt = ACTION_ITEM_DETECTION_PROMPT.replace(
     "[TRANSCRIPT]",
