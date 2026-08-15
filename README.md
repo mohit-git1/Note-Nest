@@ -1,6 +1,6 @@
 # Note Nest
 
-A real-time AI meeting assistant that captures live transcription, generates intelligent suggestions, and extracts actionable tasks and goals directly from your conversations. Built for professionals who need a highly responsive, automated cognitive co-pilot.
+Hi Mohit this side, thanks for reaching out here I got this insipiration from some project assingment to build this thing where user can join a meeting and can get there real-time AI meeting notes that captures live transcription, generates intelligent suggestions, and extracts actionable tasks and goals directly from your conversations. Built for professionals who need a highly responsive, automated cognitive co-pilot.
 
 ## Live Demo
 
@@ -8,12 +8,18 @@ Experience the application live: [Note Nest on Vercel](https://note-nest-gilt.ve
 
 ## Features
 
-- **Live Transcription Pipeline:** High-performance audio ingestion and processing for seamless, real-time meeting transcription.
+- **Live Transcription Pipeline:** High-performance audio ingestion and processing for seamless, real-time meeting transcription (dual-source microphone + system audio).
 - **Context-Aware AI Suggestions:** Continuous background analysis of the conversation stream to generate talking points, fact-checks, and clarifications.
 - **Automated Task Extraction:** Intelligent detection of commitments and goals from spoken dialogue, automatically organized into a structured To-Do list (Today/Later).
 - **Secure Authentication:** Robust credential-based authentication with bcrypt hashing and JWT session management.
 - **Zero-Knowledge API Key Storage:** User-provided AI provider keys (Groq) are AES-256 encrypted at rest in the database.
 - **High-Fidelity UI/UX:** Responsive, edge-to-edge multi-panel layout engineered for maximum data density and minimal cognitive load.
+
+## Browser & Audio Requirements
+
+> [!IMPORTANT]
+> For best results capturing meeting/system audio, use Chrome or a Chromium-based browser and share the specific tab rather than your entire screen. Firefox does not support system audio capture.
+
 
 ## Tech Stack
 

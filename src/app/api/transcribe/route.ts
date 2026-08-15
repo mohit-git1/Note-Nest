@@ -29,19 +29,26 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Call Groq API
+    console.log(`[Transcribe API] Processing incoming file: name=${file.name}, size=${file.size} bytes, type=${file.type}`);
+
+    // Call Groq API with whisper-large-v3
+    // Omitting language allows Whisper to auto-detect any spoken language automatically
     const transcription = await groq.audio.transcriptions.create({
       file,
       model: 'whisper-large-v3',
       response_format: 'json',
+      temperature: 0.0,
     });
 
-    return NextResponse.json({ text: transcription.text });
+    console.log(`[Transcribe API] Groq result: length=${transcription.text?.length || 0} chars`);
+
+    return NextResponse.json({ text: transcription.text || '' });
   } catch (error: any) {
-    console.error('Transcription error:', error);
+    console.error('[Transcribe API] Error during transcription:', error);
     return NextResponse.json(
       { error: error?.message || 'Failed to transcribe audio' },
       { status: 500 }
     );
   }
 }
+
